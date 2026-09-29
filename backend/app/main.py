@@ -15,104 +15,116 @@ def health():
 @app.get("/db-test")
 def db_test():
     with engine.connect() as conn:
-        result = conn.execute(text("SELECT COUNT(*) FROM santraller"))
+        result = conn.execute(
+            text("SELECT COUNT(*) FROM plants")
+        )
         count = result.scalar()
 
     return {
         "database": "connected",
-        "santral_sayisi": count
+        "plant_count": count
     }
 
 
-@app.get("/santraller")
-def get_santraller():
+@app.get("/plants")
+def get_plants():
     with engine.connect() as conn:
-        result = conn.execute(text("""
-            SELECT *
-            FROM santraller
-            ORDER BY id
-        """))
+        result = conn.execute(
+            text("""
+                SELECT
+                    id,
+                    name,
+                    type,
+                    province,
+                    installed_power_mw,
+                    commissioning_year,
+                    plant_code
+                FROM plants
+                ORDER BY id
+            """)
+        )
 
         rows = result.mappings().all()
 
     return rows
 
 
-class ArizaCreate(BaseModel):
-    ekipman_id: int
-    kategori_id: int
-    tekniker_id: int
-    baslik: str
-    aciklama: str
-    oncelik: str = "ORTA"
+class FaultCreate(BaseModel):
+    equipment_id: int
+    category_id: int
+    technician_id: int
+    title: str
+    description: str
+    priority: str = "ORTA"
 
 
-@app.post("/arizalar")
-def create_ariza(ariza: ArizaCreate):
-
+@app.post("/faults")
+def create_fault(fault: FaultCreate):
     with engine.connect() as conn:
-
-        conn.execute(
+        result = conn.execute(
             text("""
-                INSERT INTO arizalar
+                INSERT INTO faults
                 (
-                    ekipman_id,
-                    kategori_id,
-                    tekniker_id,
-                    baslik,
-                    aciklama,
-                    oncelik
+                    equipment_id,
+                    category_id,
+                    technician_id,
+                    title,
+                    description,
+                    priority
                 )
                 VALUES
                 (
-                    :ekipman_id,
-                    :kategori_id,
-                    :tekniker_id,
-                    :baslik,
-                    :aciklama,
-                    :oncelik
+                    :equipment_id,
+                    :category_id,
+                    :technician_id,
+                    :title,
+                    :description,
+                    :priority
                 )
+                RETURNING id
             """),
             {
-                "ekipman_id": ariza.ekipman_id,
-                "kategori_id": ariza.kategori_id,
-                "tekniker_id": ariza.tekniker_id,
-                "baslik": ariza.baslik,
-                "aciklama": ariza.aciklama,
-                "oncelik": ariza.oncelik,
+                "equipment_id": fault.equipment_id,
+                "category_id": fault.category_id,
+                "technician_id": fault.technician_id,
+                "title": fault.title,
+                "description": fault.description,
+                "priority": fault.priority,
             }
         )
 
+        fault_id = result.scalar()
         conn.commit()
 
     return {
-        "message": "Arıza oluşturuldu"
+        "message": "Fault created",
+        "fault_id": fault_id
     }
-@app.get("/arizalar")
-def get_arizalar():
 
+
+@app.get("/faults")
+def get_faults():
     with engine.connect() as conn:
-
         result = conn.execute(
             text("""
                 SELECT
-                    a.id,
-                    a.baslik,
-                    a.aciklama,
-                    a.durum,
-                    a.oncelik,
-                    a.olusturma_tarihi,
-                    e.ad AS ekipman_adi,
-                    t.ad_soyad AS tekniker_adi,
-                    k.ad AS kategori_adi
-                FROM arizalar a
-                LEFT JOIN ekipmanlar e
-                    ON a.ekipman_id = e.id
-                LEFT JOIN teknikerler t
-                    ON a.tekniker_id = t.id
-                LEFT JOIN ariza_kategorileri k
-                    ON a.kategori_id = k.id
-                ORDER BY a.id DESC
+                    f.id,
+                    f.title,
+                    f.description,
+                    f.status,
+                    f.priority,
+                    f.created_at,
+                    e.name AS equipment_name,
+                    t.full_name AS technician_name,
+                    c.name AS category_name
+                FROM faults f
+                LEFT JOIN equipment e
+                    ON f.equipment_id = e.id
+                LEFT JOIN technicians t
+                    ON f.technician_id = t.id
+                LEFT JOIN fault_categories c
+                    ON f.category_id = c.id
+                ORDER BY f.id DESC
             """)
         )
 
