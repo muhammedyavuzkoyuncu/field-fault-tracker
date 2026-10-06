@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://field-fault-tracker.onrender.com";
 
 const TOKEN_KEY = "field_fault_tracker_token";
 const USER_KEY = "field_fault_tracker_user";
