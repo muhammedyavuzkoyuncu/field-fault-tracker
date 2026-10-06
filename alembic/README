@@ -1,1 +1,438 @@
-Generic single-database configuration.
+# Field Fault Tracker
+
+## 1. Project Overview
+
+Field Fault Tracker is a fault reporting and management system designed for field operations in power plants.
+
+The system allows field technicians to report equipment faults and enables authorized users at the central management side to monitor, update, and manage these fault records.
+
+The project is designed with an offline-capable mobile application in mind and a centralized backend and database architecture.
+
+---
+
+## 2. Project Purpose
+
+The main purpose of the project is to digitize the fault reporting process between field technicians and the central management team.
+
+The system aims to provide:
+
+- Faster fault reporting
+- Centralized fault tracking
+- Equipment and plant-based fault management
+- Technician assignment
+- Fault status tracking
+- Fault priority management
+- Structured fault categories
+- Future offline operation for field technicians
+- A centralized management interface
+
+---
+
+## 3. System Architecture
+
+The planned system consists of three main components:
+
+```text
+Flutter Mobile Application
+          |
+          v
+      FastAPI Backend
+          |
+          v
+   PostgreSQL Database
+
+   Mobile Application
+
+The mobile application will be developed using Flutter.
+
+Field technicians will use the mobile application to create and manage fault reports from the field.
+
+The application is planned to support offline operation and synchronization with the central system.
+
+Backend
+
+The backend is developed using Python and FastAPI.
+
+The backend provides REST API endpoints for:
+
+Plants
+Equipment
+Technicians
+Fault categories
+Fault records
+Database
+
+PostgreSQL is used as the relational database system.
+
+The development environment uses PostgreSQL through Docker, while the production database is hosted on Neon PostgreSQL.
+
+4. Technology Stack
+Component	Technology
+Backend	Python
+API Framework	FastAPI
+Database Access	SQLAlchemy
+Database	PostgreSQL
+Production Database	Neon PostgreSQL
+Local Database	PostgreSQL Docker Container
+Database Migration	Alembic
+Mobile Application	Flutter
+API Testing	Postman
+Version Control	Git / GitHub
+Deployment	Render
+5. Database Structure
+
+The database currently contains the following main tables:
+
+Plants
+
+Stores information about power plants.
+
+Main fields:
+
+id
+name
+type
+province
+installed_power_mw
+commissioning_year
+plant_code
+Equipment
+
+Stores equipment information associated with plants.
+
+Main fields:
+
+id
+equipment_code
+plant_id
+name
+type
+criticality
+plant_code
+Technicians
+
+Stores field technician information.
+
+Main fields:
+
+id
+full_name
+specialization
+technician_code
+main_plant_code
+Fault Categories
+
+Stores the categories used to classify faults.
+
+Main fields:
+
+id
+category_code
+name
+description
+Faults
+
+Stores fault reports created by technicians.
+
+Main fields:
+
+id
+client_uuid
+equipment_id
+category_id
+technician_id
+title
+description
+status
+priority
+created_at
+updated_at
+6. Database Relationships
+
+The main relationships are:
+
+Plant
+  |
+  +---- Equipment
+             |
+             +---- Fault
+                    |
+                    +---- Fault Category
+                    |
+                    +---- Technician
+
+An equipment item belongs to a plant.
+
+A fault can be associated with an equipment item, a fault category, and a technician.
+
+7. Development Process
+
+The project was developed incrementally.
+
+Phase 1 - Project Planning
+
+The initial project requirements and architecture were defined.
+
+The main requirements were identified as:
+
+Field fault reporting
+Central management
+Equipment tracking
+Technician assignment
+Fault categorization
+Offline capability
+Centralized database
+Phase 2 - Database Design
+
+The required database entities were identified.
+
+The initial database structure contained:
+
+Plants
+Equipment
+Technicians
+Fault Categories
+Faults
+
+Relationships between these entities were defined using foreign keys.
+
+Phase 3 - Local PostgreSQL Environment
+
+A PostgreSQL database was created locally using Docker.
+
+The local database configuration was:
+
+Database: saha_ariza
+User: admin
+Port: 5432
+
+The Docker container was configured as:
+
+saha_ariza_postgres
+
+This environment was used for local development and testing.
+
+Phase 4 - Backend Development
+
+The FastAPI backend was created.
+
+The backend was configured to communicate with PostgreSQL using SQLAlchemy.
+
+The following API endpoints were implemented:
+
+GET    /health
+GET    /db-test
+
+GET    /plants
+GET    /equipment
+GET    /technicians
+GET    /fault-categories
+
+POST   /faults
+GET    /faults
+GET    /faults/{fault_id}
+
+PUT    /faults/{fault_id}
+DELETE /faults/{fault_id}
+
+These endpoints provide the basic CRUD functionality required for fault management.
+
+Phase 5 - Database Migration
+
+Alembic was introduced for database schema management.
+
+The database tables were migrated from the initial Turkish naming structure to an English naming structure.
+
+The final table names are:
+
+plants
+equipment
+technicians
+fault_categories
+faults
+Phase 6 - Production Database
+
+Neon PostgreSQL was selected as the production database.
+
+A separate Alembic migration was created for the Neon database.
+
+The production schema was successfully created.
+
+Local development data was then transferred to Neon.
+
+The transferred data included:
+
+16 plants
+98 equipment records
+8 technicians
+6 fault categories
+Fault records from the local database
+Phase 7 - Backend Deployment
+
+The FastAPI backend was deployed using Render.
+
+The production architecture became:
+
+Client
+  |
+  v
+Render
+  |
+  v
+FastAPI
+  |
+  v
+Neon PostgreSQL
+
+The backend was tested against the Neon database.
+
+Database connectivity and plant data retrieval were successfully verified.
+
+8. Current API Functionality
+
+The backend currently supports fault creation, listing, viewing, updating, and deletion.
+
+Create Fault
+POST /faults
+
+Creates a new fault record.
+
+List Faults
+GET /faults
+
+Returns fault records together with related equipment, technician, and category information.
+
+Get Fault
+GET /faults/{fault_id}
+
+Returns detailed information about a specific fault.
+Update Fault
+PUT /faults/{fault_id}
+
+Updates:
+
+Title
+Description
+Status
+Priority
+Equipment
+Category
+Technician
+Delete Fault
+DELETE /faults/{fault_id}
+
+Deletes a fault record.
+
+9. Data Migration
+
+The initial database used Turkish table names.
+
+The database structure was migrated to English table names to provide a consistent naming convention across the backend and database.
+
+The migration process preserved the existing data.
+
+The production Neon database was populated using the local PostgreSQL data.
+
+The migration was verified by checking the record counts in the production database.
+
+10. Project Structure
+
+The current project is organized as follows:
+
+field-fault-tracker/
+│
+├── alembic/
+│
+├── backend/
+│   ├── main.py
+│   ├── database.py
+│   └── models/
+│
+├── docs/
+│
+├── mobile/
+│
+├── postman/
+│
+├── .postman/
+│
+├── alembic.ini
+├── README.md
+└── DECISIONS.md
+
+The backend directory contains the FastAPI application and database-related code.
+
+The mobile directory is reserved for the Flutter mobile application.
+
+The docs directory contains project documentation.
+
+The postman directory contains API testing resources.
+
+11. Planned Features
+
+The next development stages are planned as follows.
+
+Web Management Interface
+
+A web-based management interface will be developed for central users.
+
+Planned functionality includes:
+
+Fault dashboard
+Fault list
+Fault details
+Fault editing
+Fault deletion
+Fault filtering
+Status management
+Priority management
+Equipment information
+Technician information
+Fault category information
+Flutter Mobile Application
+
+The Flutter application will provide field technicians with a mobile interface for:
+
+Creating fault reports
+Viewing assigned faults
+Updating fault status
+Working with limited or no network connectivity
+Synchronizing data with the backend
+Offline Synchronization
+
+The mobile application is planned to support offline fault creation.
+
+Each locally created fault can use a client_uuid to help identify records created on the client side before synchronization.
+
+12. Development Status
+
+Current project status:
+
+ Project planning
+ Database design
+ Local PostgreSQL setup
+ Database models
+ Alembic setup
+ Database migration
+ FastAPI backend
+ Fault CRUD API
+ Neon PostgreSQL setup
+ Local data migration to Neon
+ Render deployment
+ Production database connection
+ Web management interface
+ Flutter mobile application
+ Offline synchronization
+ Final integration testing
+13. Repository
+
+The project source code is maintained in a GitHub repository.
+
+Repository name:
+
+field-fault-tracker
+14. Future Development
+
+Future development will focus on completing the web management interface, developing the Flutter mobile application, implementing offline synchronization, and integrating the complete field-to-central fault management workflow.
+
+The final system is planned to provide a complete workflow from field fault reporting to centralized fault monitoring and management.

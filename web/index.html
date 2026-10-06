@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Saha Arıza Yönetim Sistemi</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-screen">
+
+        <div class="login-card">
+
+            <div class="login-header">
+                <h1>Saha Arıza Yönetim Sistemi</h1>
+                <p>Sisteme giriş yapın</p>
+            </div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="loginUsername">
+                        Kullanıcı Adı
+                    </label>
+
+                    <input
+                        type="text"
+                        id="loginUsername"
+                        placeholder="Kullanıcı adınızı giriniz"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">
+                        Şifre
+                    </label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Şifrenizi giriniz"
+                        required>
+                </div>
+
+                <div id="loginError" class="login-error"></div>
+
+                <button
+                    type="submit"
+                    class="login-button">
+                    Giriş Yap
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- APPLICATION -->
+    <div id="appScreen" class="app-screen">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <div class="header-content">
+
+                <div>
+                    <h1>Saha Arıza Yönetim Sistemi</h1>
+
+                    <p>
+                        Arıza kayıtlarını ve saha operasyonlarını yönet
+                    </p>
+                </div>
+
+                <div class="user-area">
+
+                    <div>
+                        <strong id="currentUsername">-</strong>
+
+                        <span id="currentRole">
+                            -
+                        </span>
+                    </div>
+
+                    <button
+                        id="logoutButton"
+                        class="logout-button">
+                        Çıkış Yap
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- MAIN -->
+        <main class="container">
+
+            <!-- DASHBOARD -->
+            <section class="dashboard">
+
+                <div class="card">
+                    <h3>Toplam Arıza</h3>
+                    <p id="totalFaults">-</p>
+                </div>
+
+                <div class="card">
+                    <h3>Açık Arızalar</h3>
+                    <p id="openFaults">-</p>
+                </div>
+
+                <div class="card">
+                    <h3>Devam Eden</h3>
+                    <p id="ongoingFaults">-</p>
+                </div>
+
+                <div class="card">
+                    <h3>Kapalı Arızalar</h3>
+                    <p id="closedFaults">-</p>
+                </div>
+
+            </section>
+
+
+            <!-- FAULT SECTION -->
+            <section class="fault-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Arıza Kayıtları</h2>
+
+                        <p>
+                            Sistemde bulunan arıza kayıtları
+                        </p>
+                    </div>
+
+                    <button id="newFaultButton">
+                        + Yeni Arıza
+                    </button>
+
+                </div>
+
+
+                <!-- FAULT TABLE -->
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Başlık</th>
+                                <th>Ekipman</th>
+                                <th>Teknisyen</th>
+                                <th>Öncelik</th>
+                                <th>Durum</th>
+                                <th>Oluşturulma</th>
+                                <th>İşlem</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="faultTableBody">
+
+                            <tr>
+                                <td colspan="7">
+                                    Arıza kayıtları yükleniyor...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ADMIN SECTION -->
+            <section
+                id="adminSection"
+                class="admin-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Kullanıcı Yönetimi</h2>
+
+                        <p>
+                            Sistem kullanıcılarını yönetin
+                        </p>
+                    </div>
+
+                    <button id="newUserButton">
+                        + Yeni Kullanıcı
+                    </button>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Kullanıcı Adı</th>
+                                <th>E-posta</th>
+                                <th>Rol</th>
+                                <th>Oluşturulma</th>
+                                <th>İşlem</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="userTableBody">
+
+                            <tr>
+                                <td colspan="5">
+                                    Kullanıcılar yükleniyor...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- SYSTEM SECTION -->
+            <section
+                id="systemSection"
+                class="system-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Sistem Durumu</h2>
+
+                        <p>
+                            Sistem ve veritabanı bağlantısı
+                        </p>
+                    </div>
+
+                    <button id="dbTestButton">
+                        Veritabanını Test Et
+                    </button>
+
+                </div>
+
+                <div id="systemResult">
+                    Henüz test yapılmadı.
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- FAULT DETAIL MODAL -->
+    <div id="faultModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Arıza Detayı</h2>
+
+                    <p>
+                        Arıza kayıt bilgileri
+                    </p>
+                </div>
+
+                <button
+                    id="closeModalButton"
+                    class="close-button">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="detail-item">
+                    <span>Başlık</span>
+                    <strong id="detailTitle">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Açıklama</span>
+                    <strong id="detailDescription">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Durum</span>
+                    <strong id="detailStatus">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Öncelik</span>
+                    <strong id="detailPriority">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Ekipman</span>
+                    <strong id="detailEquipment">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Kategori</span>
+                    <strong id="detailCategory">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Teknisyen</span>
+                    <strong id="detailTechnician">-</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Oluşturulma</span>
+                    <strong id="detailCreatedAt">-</strong>
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button id="closeModalButtonBottom">
+                    Kapat
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NEW FAULT MODAL -->
+    <div id="newFaultModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Yeni Arıza Kaydı</h2>
+
+                    <p>
+                        Yeni bir arıza kaydı oluştur
+                    </p>
+                </div>
+
+                <button
+                    id="closeNewFaultModalButton"
+                    class="close-button">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="form-group">
+
+                    <label for="faultEquipment">
+                        Ekipman
+                    </label>
+
+                    <select id="faultEquipment">
+
+                        <option value="">
+                            Ekipman seçiniz
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="faultCategory">
+                        Kategori
+                    </label>
+
+                    <select id="faultCategory">
+
+                        <option value="">
+                            Kategori seçiniz
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="faultTechnician">
+                        Teknisyen
+                    </label>
+
+                    <select id="faultTechnician">
+
+                        <option value="">
+                            Teknisyen seçiniz
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="faultTitle">
+                        Başlık
+                    </label>
+
+                    <input
+                        type="text"
+                        id="faultTitle"
+                        placeholder="Örn: Motor sıcaklık alarmı">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="faultDescription">
+                        Açıklama
+                    </label>
+
+                    <textarea
+                        id="faultDescription"
+                        rows="5"
+                        placeholder="Arıza hakkında açıklama giriniz..."></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="faultPriority">
+                        Öncelik
+                    </label>
+
+                    <select id="faultPriority">
+
+                        <option value="DUSUK">
+                            Düşük
+                        </option>
+
+                        <option value="ORTA" selected>
+                            Orta
+                        </option>
+
+                        <option value="YUKSEK">
+                            Yüksek
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button id="cancelNewFaultButton">
+                    İptal
+                </button>
+
+                <button id="saveNewFaultButton">
+                    Kaydet
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NEW USER MODAL -->
+    <div id="newUserModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Yeni Kullanıcı</h2>
+
+                    <p>
+                        Sisteme yeni kullanıcı ekle
+                    </p>
+                </div>
+
+                <button
+                    id="closeNewUserModalButton"
+                    class="close-button">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <div class="form-group">
+
+                    <label for="newUsername">
+                        Kullanıcı Adı
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newUsername"
+                        placeholder="Kullanıcı adı">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="newUserEmail">
+                        E-posta
+                    </label>
+
+                    <input
+                        type="email"
+                        id="newUserEmail"
+                        placeholder="ornek@email.com">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="newUserPassword">
+                        Şifre
+                    </label>
+
+                    <input
+                        type="password"
+                        id="newUserPassword"
+                        placeholder="En az 8 karakter">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="newUserRole">
+                        Rol
+                    </label>
+
+                    <select id="newUserRole">
+
+                        <option value="TECHNICIAN">
+                            Technician
+                        </option>
+
+                        <option value="ADMIN">
+                            Admin
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button id="cancelNewUserButton">
+                    İptal
+                </button>
+
+                <button id="saveNewUserButton">
+                    Kullanıcı Oluştur
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
